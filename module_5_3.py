@@ -1,10 +1,17 @@
 class House:
+    houses_history = []
+
+    def __new__(cls, *args, **kwargs):
+        House.houses_history.append(args[0])
+        print(f'{args[0]} добавлен в историю')
+        return object.__new__(cls)
+
     def __init__(self, name, number_of_floors):
         self.name = name
         self.number_of_floors = number_of_floors
 
     def __del__(self):
-        print(f'{self.name} удалён')
+        print(f'{self.name} снесён, но он останется в истории')
 
     def __len__(self):
         return self.number_of_floors
@@ -158,8 +165,13 @@ class House:
 
 
 h1 = House('ЖК Эльбрус', 10)
+print(House.houses_history)
 h2 = House('ЖК Акация', 20)
+print(House.houses_history)
+h3 = House('ЖК Матрёшки', 20)
+print(House.houses_history)
 
+print('')
 print(h1)
 print(h2)
 
@@ -181,3 +193,8 @@ print(h1 < h2)  # __lt__
 print(h1 <= h2)  # __le__
 print(h1 != h2)  # __ne__
 
+print(House.houses_history)
+
+del h3
+
+print(House.houses_history)
