@@ -6,5 +6,5 @@ def all_variants(text: str):
 
 a = all_variants("abc")
 
-for i in a:
-    print(i)
+for chars in a:
+    print(chars)
