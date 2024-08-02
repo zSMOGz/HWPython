@@ -7,7 +7,8 @@ class Unknown:
         self.__x = 0
 
     def getInfo(self):
-        return 'Не скажу'
+        return 'Не скажу ' + str(self.__x)
+
 
 def introspection_info(obj):
     type_object = type(obj)
