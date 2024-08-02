@@ -1,4 +1,4 @@
-import queue
+import queue_resize_image
 import threading
 import time
 
