@@ -4,6 +4,9 @@ import tests_12.runner as runner
 
 
 class RunnerTest(ut.TestCase):
+    is_frozen = False
+
+    @ut.skipIf(is_frozen, "Тесты в этом кейсе заморожены")
     def test_walk(self):
         """
         Test for function walk class Runner
@@ -14,6 +17,7 @@ class RunnerTest(ut.TestCase):
             current_runner.walk()
         self.assertEqual(current_runner.distance, 50)
 
+    @ut.skipIf(is_frozen, "Тесты в этом кейсе заморожены")
     def test_run(self):
         """
         Test for function run class Runner
@@ -24,6 +28,7 @@ class RunnerTest(ut.TestCase):
             current_runner.run()
         self.assertEqual(current_runner.distance, 100)
 
+    @ut.skipIf(is_frozen, "Тесты в этом кейсе заморожены")
     def test_challenge(self):
         """
         Test for function run and walk class Runner
