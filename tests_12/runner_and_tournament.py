@@ -19,15 +19,29 @@ class Runner:
         elif isinstance(other, Runner):
             return self.name == other.name
 
+    def __lt__(self, other):
+        if self.speed < other.speed:
+            return True
+        else:
+            return False
+
+    def __gt__(self, other):
+        if self.speed > other.speed:
+            return True
+        else:
+            return False
+
 
 class Tournament:
-    def __init__(self, distance, *participants):
+    def __init__(self, distance, *participants:Runner):
         self.full_distance = distance
         self.participants = list(participants)
 
     def start(self):
         finishers = {}
         place = 1
+        self.participants = sorted(self.participants, reverse=True)
+
         while self.participants:
             for participant in self.participants:
                 participant.run()
