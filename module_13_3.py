@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import Message
@@ -18,12 +19,18 @@ async def main():
 
 @dp.message(Command("start"))
 async def start(message: Message):
-    print("Привет! Я бот помогающий твоему здоровью!")
+    await message.answer(
+        "Привет! Я бот помогающий твоему здоровью.</b>!",
+        parse_mode=ParseMode.HTML
+    )
 
 
 @dp.message(F.text)
 async def all_message(message: Message):
-    print("Введите команду /start, чтобы начать общение.")
+    await message.answer(
+        "Введите команду /start, чтобы начать общение.",
+        parse_mode=ParseMode.HTML
+    )
 
 
 if __name__ == "__main__":
