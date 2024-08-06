@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from crud_functions import *
 
-TG_API_TOKEN = '7447672865:AAFfFiIN89Z87JITebSfyxsYoq5IBt3NUsU'
+TG_API_TOKEN = ''
 BUTTON_CALCULATE = "Рассчитать"
 BUTTON_INFO = "Информация"
 BUTTON_BUY = "Купить"
