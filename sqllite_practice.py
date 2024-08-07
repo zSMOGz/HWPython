@@ -1,7 +1,5 @@
 import sqlite3
 
-from random import randint
-
 path = 'J:\\Python\\DB\\database.db'
 connection = sqlite3.connect(path)
 cursor = connection.cursor()

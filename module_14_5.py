@@ -11,9 +11,10 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from crud_functions import *
 
-TG_API_TOKEN = '7447672865:AAFfFiIN89Z87JITebSfyxsYoq5IBt3NUsU'
+TG_API_TOKEN = 't'
 BUTTON_CALCULATE = "Рассчитать"
 BUTTON_INFO = "Информация"
+BUTTON_REGISTRATION = "Регистрация"
 BUTTON_BUY = "Купить"
 BUTTON_PRODUCT1 = "Продукт1"
 BUTTON_PRODUCT2 = "Продукт2"
@@ -34,6 +35,13 @@ class UserState(StatesGroup):
     weight = State()
 
 
+class RegistrationState(StatesGroup):
+    sign_up = State()
+    username = State()
+    email = State()
+    age_user = State()
+
+
 async def main():
     bot = Bot(token=TG_API_TOKEN)
 
@@ -46,6 +54,7 @@ def get_calories_and_information_buttons() -> ReplyKeyboardMarkup:
     kb.button(text=BUTTON_CALCULATE)
     kb.button(text=BUTTON_INFO)
     kb.button(text=BUTTON_BUY)
+    kb.button(text=BUTTON_REGISTRATION)
     kb.adjust(2)
     return kb.as_markup(resize_keyboard=True)
 
@@ -81,7 +90,6 @@ async def button_information(message: Message):
 async def price(message: Message):
     await get_buying_list(message)
 
-
 async def get_buying_list(message: Message):
     for product in all_products:
         await message.answer(f'Название: {product[1]} | Описание: {product[2]} | Цена: {product[3]}')
@@ -102,8 +110,8 @@ async def send_confirm_message(call):
 
 
 @dp.message(StateFilter(UserState.age), F.text.isdigit())
-async def set_growth(message: Message,
-                     state: FSMContext):
+async def set_age(message: Message,
+                  state: FSMContext):
     await state.update_data(age=message.text)
     await message.answer(f'Введите свой рост:')
     await state.set_state(UserState.growth)
@@ -126,6 +134,44 @@ async def send_calories(message: Message,
                       + 6.25 * int(data['growth'])
                       - 5 * int(data['age']) + 5)
     await message.answer(f'Ваша норма калорий {norm_of_colors}')
+    await state.set_state(default_state)
+
+
+@dp.message(F.text == BUTTON_REGISTRATION)
+@dp.message(StateFilter(RegistrationState.sign_up), F.text.isalpha())
+async def sign_up_user(message: Message,
+                       state: FSMContext):
+    await message.answer(f'Введите имя пользователя (только латинский алфавит):')
+    await state.set_state(RegistrationState.username)
+
+
+@dp.message(StateFilter(RegistrationState.username), F.text.isalpha())
+async def set_username(message: Message,
+                       state: FSMContext):
+    await state.update_data(user_name=message.text)
+    if db.is_included(message.text) is True:
+        await message.answer(f'Пользователь существует, введите другое имя')
+        await state.set_state(RegistrationState.sign_up)
+    else:
+        await message.answer(f'Введите адрес электронной почты:')
+        await state.set_state(RegistrationState.email)
+
+
+@dp.message(StateFilter(RegistrationState.email), F.text.isalpha())
+async def set_email(message: Message,
+                    state: FSMContext):
+    await state.update_data(email=message.text)
+    await message.answer(f'Введите свой возраст:')
+    await state.set_state(RegistrationState.age_user)
+
+
+@dp.message(StateFilter(RegistrationState.age_user), F.text.isdigit())
+async def set_age_user(message: Message,
+                       state: FSMContext):
+    await state.update_data(age_user=message.text)
+    data = await state.get_data()
+    db.add_user(data['user_name'], data['email'], data['age_user'])
+    await message.answer(f'Регистрация прошла успешно')
     await state.set_state(default_state)
 
 

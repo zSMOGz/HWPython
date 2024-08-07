@@ -1,4 +1,4 @@
-TG_API_TOKEN = 'Е'
+TG_API_TOKEN = ''
 
 PRICE_M = 1500
 PRICE_L = 2000
