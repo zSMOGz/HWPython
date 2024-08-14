@@ -10,7 +10,7 @@ from pydantic import BaseModel
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-users = []
+users_db = []
 
 
 class User(BaseModel):
@@ -23,7 +23,7 @@ class User(BaseModel):
 async def get_all_users(request: Request) -> HTMLResponse:
     return templates.TemplateResponse("users.html",
                                       {"request": request,
-                                       "users": users})
+                                       "users": users_db})
 
 
 @app.get("/user/{user_id}")
@@ -32,7 +32,7 @@ async def get_user(request: Request,
     try:
         return templates.TemplateResponse("users.html",
                                           {"request": request,
-                                           "user": users[user_id]})
+                                           "user": users_db[user_id]})
     except IndexError:
         raise HTTPException(status_code=404,
                             detail="User not found")
@@ -42,19 +42,19 @@ async def get_user(request: Request,
 async def create_user(request: Request,
                       username: str = Form(description='Enter username'),
                       age: int = Form()) -> HTMLResponse:
-    if users:
-        user_id = max(users, key=lambda m: m.id).id + 1
+    if users_db:
+        user_id = max(users_db, key=lambda u: u.id).id + 1
     else:
         user_id = 0
     print(user_id)
     user = User(id=user_id,
                 username=username,
                 age=age)
-    users.append(user)
+    users_db.append(user)
     try:
         return templates.TemplateResponse("users.html",
                                           {"request": request,
-                                           "user": users[user_id]})
+                                           "user": users_db[user_id]})
     except IndexError:
         raise HTTPException(status_code=404,
                             detail="User not found")
@@ -69,9 +69,9 @@ async def update_user(user_id: int = Path(ge=1),
                                       description='Enter age',
                                       examples=[18])) -> User:
     try:
-        users[user_id].username = username
-        users[user_id].age = age
-        return users[user_id]
+        users_db[user_id].username = username
+        users_db[user_id].age = age
+        return users_db[user_id]
     except IndexError:
         raise HTTPException(status_code=404,
                             detail="User not found")
@@ -80,7 +80,7 @@ async def update_user(user_id: int = Path(ge=1),
 @app.delete("/user/{user_id}")
 async def delete_user(user_id: int = Path(ge=1)) -> User:
     try:
-        deleted_user = users.pop(user_id)
+        deleted_user = users_db.pop(user_id)
         return deleted_user
     except IndexError:
         raise HTTPException(status_code=404,
