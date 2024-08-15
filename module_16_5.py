@@ -38,26 +38,26 @@ async def get_user(request: Request,
                             detail="User not found")
 
 
-# @app.post("/")
-# async def create_user(request: Request,
-#                       username: str = Form(description='Enter username'),
-#                       age: int = Form()) -> HTMLResponse:
-#     if users:
-#         user_id = max(users, key=lambda m: m.id).id + 1
-#     else:
-#         user_id = 0
-#     print(user_id)
-#     user = User(id=user_id,
-#                 username=username,
-#                 age=age)
-#     users.append(user)
-#     try:
-#         return templates.TemplateResponse("users.html",
-#                                           {"request": request,
-#                                            "user": users[user_id]})
-#     except IndexError:
-#         raise HTTPException(status_code=404,
-#                             detail="User not found")
+@app.post("/")
+async def create_user(request: Request,
+                      username: str = Form(description='Enter username'),
+                      age: int = Form()) -> HTMLResponse:
+    if users:
+        user_id = max(users, key=lambda m: m.id).id + 1
+    else:
+        user_id = 0
+    print(user_id)
+    user = User(id=user_id,
+                username=username,
+                age=age)
+    users.append(user)
+    try:
+        return templates.TemplateResponse("users.html",
+                                          {"request": request,
+                                           "user": users[user_id]})
+    except IndexError:
+        raise HTTPException(status_code=404,
+                            detail="User not found")
 
 @app.post("/user/{username}/{age}")
 async def create_user(username: str = Path(description='Enter username',
