@@ -6,6 +6,8 @@ from slugify import slugify  # pip install python-slugify
 from app.backend.db_depends import get_db
 from app.schemas import CreateUser
 from app.models.user import User
+from app.routers.validator import *
+from .task import get_tasks_by_user_id, delete_task
 
 router = APIRouter(prefix="/user",
                    tags=["user"])
@@ -17,7 +19,7 @@ async def create_user(db: Annotated[Session, Depends(get_db)],
     if select(User).where(User.username == create_user.username):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="Пользователь с таким именем уже существует")
-    else:
+    try:
         db.execute(Insert(User).values(username=create_user.username,
                                        firstname=create_user.firstname,
                                        lastname=create_user.lastname,
@@ -26,6 +28,10 @@ async def create_user(db: Annotated[Session, Depends(get_db)],
         db.commit()
         return {"status_code": status.HTTP_201_CREATED,
                 "message": "Пользователь создан"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=status.HTTP_304_NOT_MODIFIED,
+                            detail="Ошибка при создании пользователя")
 
 
 @router.get("/")
@@ -36,20 +42,15 @@ async def get_all_users(db: Annotated[Session, Depends(get_db)]):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Пользователь не найден")
+                            detail="Пользователи не найдены")
 
 
 @router.get("/user_id")
 async def get_user_by_id(db: Annotated[Session, Depends(get_db)],
                          user_id: int):
-    try:
-        user = db.query(User).filter(User.id == user_id).first()
-
-        return user
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Пользователь не найден")
+    user = await is_valid_user(db,
+                               user_id)
+    return user
 
 
 @router.put("/update")
@@ -57,13 +58,9 @@ async def update_user(db: Annotated[Session, Depends(get_db)],
                       user_id: int,
                       update_user: CreateUser):
     try:
-        user = db.query(User).filter(User.id == user_id).first()
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Пользователь не найден")
+        await is_valid_user(db,
+                            user_id)
 
-    try:
         db.execute(update(User).where(User.id == user_id).values(
             username=update_user.username,
             firstname=update_user.firstname,
@@ -84,12 +81,16 @@ async def update_user(db: Annotated[Session, Depends(get_db)],
 async def delete_user(db: Annotated[Session, Depends(get_db)],
                       user_id: int):
     try:
-        user = db.query(User).filter(User.id == user_id).first()
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Пользователь не найден")
-    try:
+        await is_valid_user(db,
+                            user_id)
+
+        tasks = await get_tasks_by_user_id(db,
+                                           user_id)
+
+        for task in tasks:
+            await delete_task(db,
+                              task.id)
+
         db.execute(delete(User).where(User.id == user_id))
 
         db.commit()
