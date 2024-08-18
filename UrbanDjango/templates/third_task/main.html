@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Главная страница</title>
+        <style>
+            body { margin: 0; }
+            html {
+                height: 100%;
+            }
+            body {
+                min-height: 100%;
+                display: grid;
+                grid-template-rows: 1fr auto;
+            }
+            .footer {
+                grid-row-start: 2;
+                grid-row-end: 3;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <h2>
+                <button title="(ты уже здесь!)"><a href="#">На главную</a></button>
+                <button title="(купи!)"><a href="/shop">В магазин</a></button>
+                <button title="(да, прыгай в корзину!)"><a href="/cart">В корзину</a></button>
+            </h2>
+            <div class="push"><h1>Главная страница</h1></div>
+            <p>Добро пожаловать в магазин игр дядюшки П</p>
+        </div>
+        <footer class="footer">
+            <h2>
+                <button title="(ты уже здесь!)"><a href="#">На главную</a></button>
+                <button title="(купи!)"><a href="/shop">В магазин</a></button>
+                <button title="(да, прыгай в корзину!)"><a href="/cart">В корзину</a></button>
+            </h2>
+        </footer>
+    </body>
+</html>
