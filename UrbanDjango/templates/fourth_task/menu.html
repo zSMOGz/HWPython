@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+    <title>Главная страница</title>
+    {% endblock %}
+    <link rel = 'stylesheet' type='text/css' href = '{% static "style.css" %}'>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="push">
+            {% block pagename %}
+            <h1>Главная страница</h1>
+            {% endblock %}
+
+            {% block content %}
+            <p>Добро пожаловать в магазин игр дядюшки П</p>
+            {% endblock %}
+        </div>
+    </div>
+    <footer class="footer">
+        <h2>
+            {% block menu %}
+            <button title="(ты уже здесь!)"><a href="#">На главную</a></button>
+            <button title="(купи!)"><a href="/shop">В магазин</a></button>
+            <button title="(да, прыгай в корзину!)"><a href="/cart">В корзину</a></button>
+            {% endblock %}
+        </h2>
+    </footer>
+</body>
+</html>
