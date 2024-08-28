@@ -45,7 +45,7 @@ async def get_all_tasks(db: Annotated[Session, Depends(get_db)]):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Пользователи не найдены")
+                            detail="Задачи не найдены")
 
 
 @router.get("/task_id")
